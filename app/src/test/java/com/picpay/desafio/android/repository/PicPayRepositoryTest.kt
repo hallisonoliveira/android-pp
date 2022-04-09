@@ -40,6 +40,21 @@ internal class PicPayRepositoryTest {
         assert(sut.amountRequests == 1)
     }
 
+    @ExperimentalCoroutinesApi
+    @Test
+    fun `when fetch users twice, should have only two requests`() = runTest {
+        //given
+        val sut = PicPayRepositorySut()
+        val repository = sut.createRepository()
+
+        // when
+        repository.fetchUsers()
+        repository.fetchUsers()
+
+        // then
+        assert(sut.amountRequests == 2)
+    }
+
 }
 
 /**
@@ -61,7 +76,6 @@ private class PicPayRepositorySut : PicPayService {
     }
 
     override suspend fun fetchUsers(): List<UserDto> {
-        amountRequests++
         amountRequests++
         return emptyList()
     }
