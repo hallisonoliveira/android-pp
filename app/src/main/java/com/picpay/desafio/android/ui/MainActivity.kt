@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.picpay.desafio.android.PicPayService
+import com.picpay.desafio.android.service.PicPayService
 import com.picpay.desafio.android.R
 import com.picpay.desafio.android.User
 import com.picpay.desafio.android.UserListAdapter
