@@ -87,7 +87,10 @@ internal class PicPayRepositoryTest {
  *
  * SUT = System Under Test
  */
-private class PicPayRepositorySut : PicPayService {
+
+internal class PicPayRepositorySut : PicPayService {
+
+    private val repository: PicPayRepository = PicPayRepositoryImpl(this)
 
     var amountRequests: Int = 0
        private set
@@ -95,7 +98,7 @@ private class PicPayRepositorySut : PicPayService {
     var users: List<UserDto>? = null
 
     fun createRepository(): PicPayRepository {
-        return PicPayRepository(this)
+        return repository
     }
 
     override fun getUsers(): Call<List<com.picpay.desafio.android.User>> {
