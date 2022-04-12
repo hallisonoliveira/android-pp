@@ -1,6 +1,5 @@
 package com.picpay.desafio.android.repository
 
-import com.nhaarman.mockitokotlin2.mock
 import com.picpay.desafio.android.model.dto.UserDto
 import com.picpay.desafio.android.model.mapper.toDomain
 import com.picpay.desafio.android.service.PicPayService
@@ -9,7 +8,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import retrofit2.Call
 
 @RunWith(JUnit4::class)
 internal class PicPayRepositoryTest {
@@ -79,7 +77,6 @@ internal class PicPayRepositoryTest {
         assert(returnedList.size == 1)
         assert(returnedList == usersDomain)
     }
-
 }
 
 /**
@@ -87,7 +84,6 @@ internal class PicPayRepositoryTest {
  *
  * SUT = System Under Test
  */
-
 internal class PicPayRepositorySut : PicPayService {
 
     private val repository: PicPayRepository = PicPayRepositoryImpl(this)
@@ -101,13 +97,8 @@ internal class PicPayRepositorySut : PicPayService {
         return repository
     }
 
-    override fun getUsers(): Call<List<com.picpay.desafio.android.User>> {
-        return mock()
-    }
-
     override suspend fun fetchUsers(): List<UserDto> {
         amountRequests++
         return users ?: emptyList()
     }
-
 }
