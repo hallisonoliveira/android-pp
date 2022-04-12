@@ -6,9 +6,7 @@ import com.picpay.desafio.android.service.PicPayService
 import javax.inject.Inject
 
 interface PicPayRepository {
-
     suspend fun fetchUsers(): List<User>
-
 }
 
 internal class PicPayRepositoryImpl @Inject constructor(
