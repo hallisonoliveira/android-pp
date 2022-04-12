@@ -4,10 +4,10 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.picpay.desafio.android.constants.NetworkConstants
 import com.picpay.desafio.android.repository.PicPayRepository
-import com.picpay.desafio.android.repository.PicPayRepositoryImpl
+import com.picpay.desafio.android.repository.impl.PicPayRepositoryImpl
 import com.picpay.desafio.android.service.PicPayService
 import com.picpay.desafio.android.usecase.FetchUsersUseCase
-import com.picpay.desafio.android.usecase.FetchUsersUseCaseImpl
+import com.picpay.desafio.android.usecase.impl.FetchUsersUseCaseImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

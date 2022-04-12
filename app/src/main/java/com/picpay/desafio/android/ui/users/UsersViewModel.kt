@@ -15,8 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UsersViewModel @Inject constructor(
-    savedState: SavedStateHandle,
-    private val fetchUsersUseCase: FetchUsersUseCase
+    private val fetchUsersUseCase: FetchUsersUseCase,
+    savedState: SavedStateHandle
 ) : BaseViewModel<UsersState, UsersCommand, UsersAction>(
     savedState,
     UsersState()

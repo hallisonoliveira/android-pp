@@ -2,6 +2,7 @@ package com.picpay.desafio.android.repository
 
 import com.picpay.desafio.android.model.dto.UserDto
 import com.picpay.desafio.android.model.mapper.toDomain
+import com.picpay.desafio.android.repository.impl.PicPayRepositoryImpl
 import com.picpay.desafio.android.service.PicPayService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
