@@ -67,9 +67,6 @@ class NetworkModules {
         return PicPayRepositoryImpl(service)
     }
 
-    @Provides
-    fun provideFetchUsersUseCase(
-        repository: PicPayRepository
-    ): FetchUsersUseCase = FetchUsersUseCaseImpl(repository)
+
 
 }

@@ -10,12 +10,14 @@ import com.picpay.desafio.android.model.domain.User
 import com.picpay.desafio.android.usecase.FetchUsersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.android.parcel.Parcelize
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class UsersViewModel @Inject constructor(
     private val fetchUsersUseCase: FetchUsersUseCase,
+    private val dispatcher: CoroutineDispatcher,
     savedState: SavedStateHandle
 ) : BaseViewModel<UsersState, UsersCommand, UsersAction>(
     savedState,
@@ -23,10 +25,8 @@ class UsersViewModel @Inject constructor(
 ) {
 
     fun act(action: UsersAction) {
-        viewModelScope.launch {
-            when (action) {
-                is UsersAction.LoadUsers -> loadUsers()
-            }
+        when (action) {
+            is UsersAction.LoadUsers -> viewModelScope.launch(dispatcher) { loadUsers() }
         }
     }
 

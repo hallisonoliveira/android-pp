@@ -28,7 +28,7 @@ abstract class BaseViewModel<STATE: State, COMMAND: Command, ACTION: Action>(
     }
     
     companion object {
-        private const val SAVED_STATE_KEY = "state"
+        const val SAVED_STATE_KEY = "state"
     }
 
 }
