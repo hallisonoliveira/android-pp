@@ -26,12 +26,13 @@ buildscript {
         mockito_kotlin_version = '2.1.0'
 
         test_runner_version = '1.4.0'
-        espresso_version = '3.4.0'
+        espresso_version = '3.5.0-alpha05'
         arch_core_testing = '2.1.0'
         kotest_assertions = '5.0.0'
 
         hilt_version = "2.39.1"
         hilt_compiler = "1.0.0"
+        hilt_common = "1.0.0"
         hilt_lifecycle = "1.0.0-alpha03"
 
         lifecycle_version = "2.4.1"

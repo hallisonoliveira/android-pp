@@ -73,7 +73,7 @@ dependencies {
 
     implementation "com.google.dagger:hilt-android:$hilt_version"
     implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hilt_lifecycle"
-    implementation "androidx.hilt:hilt-common:1.0.0"
+    implementation "androidx.hilt:hilt-common:$hilt_common"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
     kapt "androidx.hilt:hilt-compiler:$hilt_compiler"
 
@@ -125,4 +125,5 @@ dependencies {
     androidTestImplementation "androidx.test:runner:$test_runner_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
     androidTestImplementation "androidx.test:core-ktx:$core_ktx_test_version"
+    androidTestImplementation 'androidx.test:rules:1.4.1-alpha05'
 }
