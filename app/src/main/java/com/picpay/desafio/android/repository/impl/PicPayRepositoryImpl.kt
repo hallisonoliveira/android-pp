@@ -13,7 +13,7 @@ internal class PicPayRepositoryImpl constructor(
 
     override suspend fun fetchUsers() = flow {
         try {
-            val usersRemote = remoteUsersSource.load()
+            val usersRemote = remoteUsersSource.fetch()
             localUsersSource.saveAll(usersRemote)
         } catch (e: Exception) {
             Timber.e(e)

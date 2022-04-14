@@ -9,6 +9,8 @@ import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.*
 import org.junit.After
 import org.junit.Before
@@ -128,7 +130,7 @@ private class UsersViewModelSut(
 
     private var savedStateHandle: SavedStateHandle? = null
 
-    var users = emptyList<User>()
+    var users: List<User>? = null
 
     fun addUsersToSavedStateHandle(users: List<User>) {
         savedStateHandle = SavedStateHandle().apply {
@@ -142,7 +144,7 @@ private class UsersViewModelSut(
         savedState = savedStateHandle ?: SavedStateHandle()
     )
 
-    override suspend fun execute(): List<User> {
-        return users
+    override suspend fun execute(): Flow<List<User>> {
+        return users?.run(::flowOf) ?: flowOf(emptyList())
     }
 }

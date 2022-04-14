@@ -1,10 +1,19 @@
 package com.picpay.desafio.android.repository
 
+import com.picpay.desafio.android.model.domain.User
 import com.picpay.desafio.android.model.dto.UserDto
 import com.picpay.desafio.android.model.mapper.toDomain
 import com.picpay.desafio.android.repository.impl.PicPayRepositoryImpl
+import com.picpay.desafio.android.repository.source.LocalUsersSource
+import com.picpay.desafio.android.repository.source.RemoteUsersSource
 import com.picpay.desafio.android.service.PicPayService
+import io.kotest.matchers.ints.shouldBeExactly
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -13,70 +22,89 @@ import org.junit.runners.JUnit4
 @RunWith(JUnit4::class)
 internal class PicPayRepositoryTest {
 
-    @Test
-    fun `when create instance, should have not any request`() {
-        // given
-        val sut = PicPayRepositorySut()
-
-        // when
-        sut.createRepository()
-
-        // then
-        assert(sut.amountRequests == 0)
-    }
-
-    @ExperimentalCoroutinesApi
-    @Test
-    fun `when fetch users once, should have only one request`() = runTest {
-        //given
-        val sut = PicPayRepositorySut()
-        val repository = sut.createRepository()
-
-        // when
-        repository.fetchUsers()
-
-        // then
-        assert(sut.amountRequests == 1)
-    }
-
-    @ExperimentalCoroutinesApi
-    @Test
-    fun `when fetch users twice, should have only two requests`() = runTest {
-        //given
-        val sut = PicPayRepositorySut()
-        val repository = sut.createRepository()
-
-        // when
-        repository.fetchUsers()
-        repository.fetchUsers()
-
-        // then
-        assert(sut.amountRequests == 2)
-    }
-
     @ExperimentalCoroutinesApi
     @Test
     fun `when fetch users list with one item, should return a list with one item`() = runTest {
         // given
         val sut = PicPayRepositorySut()
         val repository = sut.createRepository()
-        val usersDto = listOf(
-            UserDto(
+        val users = listOf(
+            User(
                 id = Int.MAX_VALUE,
                 name = "Name of the user",
                 username = "Username of the user",
                 img = "http://foo.bar"
             )
         )
-        sut.users = usersDto
-        val usersDomain = usersDto.map { it.toDomain() }
+        sut.users = users
 
         // when
-        val returnedList = repository.fetchUsers()
+        val returnedList = repository.fetchUsers().first()
 
         // then
-        assert(returnedList.size == 1)
-        assert(returnedList == usersDomain)
+        returnedList.size shouldBe 1
+        returnedList shouldBe users
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun `when fetch users list with two items, should return a list with two items`() = runTest {
+        // given
+        val sut = PicPayRepositorySut()
+        val repository = sut.createRepository()
+        val users = listOf(
+            User(
+                id = Int.MAX_VALUE,
+                name = "Name of the user",
+                username = "Username of the user",
+                img = "http://foo.bar"
+            ),
+            User(
+                id = 1234,
+                name = "Name of the user 2",
+                username = "Username of the user 2",
+                img = "http://foo.bar.2"
+            )
+        )
+        sut.users = users
+
+        // when
+        val returnedList = repository.fetchUsers().first()
+
+        // then
+        returnedList.size shouldBe 2
+        returnedList.forEach { returnedUser ->
+            users.firstOrNull { it.id == returnedUser.id } shouldNotBe null
+        }
+    }
+
+    @Test
+    fun `when fetch users from remote source, should store them on local source and then return`() = runTest {
+        // given
+        val sut = PicPayRepositorySut()
+        val repository = sut.createRepository()
+        val users = listOf(
+            User(
+                id = Int.MAX_VALUE,
+                name = "Name of the user",
+                username = "Username of the user",
+                img = "http://foo.bar"
+            )
+        )
+        sut.users = users
+
+        // when
+        val returnedList = repository.fetchUsers().first()
+
+        // then
+        returnedList.size shouldBe 1
+        returnedList.forEach { returnedUser ->
+            users.firstOrNull { it.id == returnedUser.id } shouldNotBe null
+        }
+        sut.usersOnLocalSource shouldNotBe null
+        sut.usersOnLocalSource!!.forEach { returnedUser ->
+            users.firstOrNull { it.id == returnedUser.id } shouldNotBe null
+        }
     }
 }
 
@@ -85,21 +113,28 @@ internal class PicPayRepositoryTest {
  *
  * SUT = System Under Test
  */
-internal class PicPayRepositorySut : PicPayService {
+internal class PicPayRepositorySut : RemoteUsersSource, LocalUsersSource {
 
-    private val repository: PicPayRepository = PicPayRepositoryImpl(this)
-
-    var amountRequests: Int = 0
-       private set
-
-    var users: List<UserDto>? = null
+    var users: List<User>? = null
+    var usersOnLocalSource: List<User>? = null
+        private set
 
     fun createRepository(): PicPayRepository {
-        return repository
+        return PicPayRepositoryImpl(
+            remoteUsersSource = this,
+            localUsersSource = this
+        )
     }
 
-    override suspend fun fetchUsers(): List<UserDto> {
-        amountRequests++
+    override suspend fun fetch(): List<User> {
         return users ?: emptyList()
+    }
+
+    override suspend fun load(): List<User> {
+        return usersOnLocalSource ?: emptyList()
+    }
+
+    override fun saveAll(users: List<User>) {
+        usersOnLocalSource = users
     }
 }
