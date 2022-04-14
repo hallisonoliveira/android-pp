@@ -1,17 +1,25 @@
 package com.picpay.desafio.android.repository.impl
 
-import com.picpay.desafio.android.model.domain.User
-import com.picpay.desafio.android.model.mapper.toDomain
 import com.picpay.desafio.android.repository.PicPayRepository
-import com.picpay.desafio.android.service.PicPayService
-import javax.inject.Inject
+import com.picpay.desafio.android.repository.source.LocalUsersSource
+import com.picpay.desafio.android.repository.source.RemoteUsersSource
+import kotlinx.coroutines.flow.flow
+import timber.log.Timber
 
-internal class PicPayRepositoryImpl @Inject constructor(
-    private val service: PicPayService
+internal class PicPayRepositoryImpl constructor(
+    private val remoteUsersSource: RemoteUsersSource,
+    private val localUsersSource: LocalUsersSource
 ) : PicPayRepository {
 
-    override suspend fun fetchUsers(): List<User> {
-        return service.fetchUsers().map { it.toDomain() }
-    }
+    override suspend fun fetchUsers() = flow {
+        try {
+            val usersRemote = remoteUsersSource.load()
+            localUsersSource.saveAll(usersRemote)
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
 
+        val usersLocal = localUsersSource.load()
+        emit(usersLocal)
+    }
 }

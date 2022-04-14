@@ -24,7 +24,7 @@ abstract class BaseViewModel<STATE: State, COMMAND: Command, ACTION: Action>(
 
     fun newState(state: STATE) {
         savedState[SAVED_STATE_KEY] = state
-        _state.value = state
+        _state.postValue(state)
     }
     
     companion object {

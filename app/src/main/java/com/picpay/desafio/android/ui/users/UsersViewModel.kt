@@ -33,9 +33,14 @@ class UsersViewModel @Inject constructor(
     private suspend fun loadUsers() {
         newState(currentState.copy(loading = true))
 
-        val users = currentState.users.ifEmpty { fetchUsersUseCase.execute() }
+        val currentUsersList = currentState.users
 
-        newState(currentState.copy(users = users, loading = false))
+        if (currentUsersList.isNotEmpty())
+            newState(currentState.copy(users = currentUsersList, loading = false))
+
+        fetchUsersUseCase.execute().collect { users ->
+            newState(currentState.copy(users = users, loading = false))
+        }
     }
 }
 

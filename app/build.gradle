@@ -4,9 +4,9 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
-apply plugin: 'kotlin-kapt'
-
 apply plugin: 'dagger.hilt.android.plugin'
+
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 32
@@ -20,6 +20,15 @@ android {
         vectorDrawables.useSupportLibrary = true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += [
+                    "room.schemaLocation":"$projectDir/schemas".toString(),
+                    "room.incremental":"true",
+                    "room.expandProjection":"true"]
+            }
+        }
     }
     buildTypes {
         debug {}
@@ -63,10 +72,14 @@ dependencies {
     implementation "com.google.android.material:material:$material_version"
 
     implementation "com.google.dagger:hilt-android:$hilt_version"
+    implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hilt_lifecycle"
+    implementation "androidx.hilt:hilt-common:1.0.0"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+    kapt "androidx.hilt:hilt-compiler:$hilt_compiler"
+
     kaptTest "com.google.dagger:hilt-android-compiler:$hilt_version"
+    kaptTest "com.google.dagger:hilt-compiler:$hilt_version"
     testImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
-    testAnnotationProcessor "com.google.dagger:hilt-compiler:$hilt_version"
     androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
     kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
 
@@ -95,6 +108,12 @@ dependencies {
 
     implementation "com.squareup.picasso:picasso:$picasso_version"
     implementation "de.hdodenhof:circleimageview:$circleimageview_version"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    testImplementation "androidx.room:room-testing:$room_version"
+
+    implementation "com.jakewharton.timber:timber:$timber_version"
 
     testImplementation "junit:junit:$junit_version"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit5_version"

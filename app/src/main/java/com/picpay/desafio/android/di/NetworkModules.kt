@@ -3,11 +3,7 @@ package com.picpay.desafio.android.di
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.picpay.desafio.android.constants.NetworkConstants
-import com.picpay.desafio.android.repository.PicPayRepository
-import com.picpay.desafio.android.repository.impl.PicPayRepositoryImpl
 import com.picpay.desafio.android.service.PicPayService
-import com.picpay.desafio.android.usecase.FetchUsersUseCase
-import com.picpay.desafio.android.usecase.impl.FetchUsersUseCaseImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,7 +16,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class NetworkModules {
+object NetworkModules {
 
     @Provides
     fun providesGson(): Gson {
@@ -28,7 +24,6 @@ class NetworkModules {
     }
 
     @Provides
-    @Singleton
     fun providesLoggingInterceptor(): HttpLoggingInterceptor {
         val logging = HttpLoggingInterceptor()
         logging.level = HttpLoggingInterceptor.Level.BODY
@@ -36,7 +31,6 @@ class NetworkModules {
     }
 
     @Provides
-    @Singleton
     fun providesOkHttp(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
@@ -59,14 +53,4 @@ class NetworkModules {
     @Singleton
     fun providePicPayService(retrofit: Retrofit): PicPayService =
         retrofit.create(PicPayService::class.java)
-
-    @Provides
-    fun providePicPayRepository(
-        service: PicPayService
-    ): PicPayRepository {
-        return PicPayRepositoryImpl(service)
-    }
-
-
-
 }
